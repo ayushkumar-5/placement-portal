@@ -55,7 +55,7 @@ function App() {
         <div className="nav-brand">
           <img src="/favicon.png" alt="RVITM Logo" className="nav-logo" style={{ objectFit: 'contain', backgroundColor: 'white', padding: '2px' }} />
           <div className="nav-title" style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.2rem', fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.3px', marginLeft: '0.5rem' }}>
-            RV Institute of<br/>Management<sup style={{fontSize: '0.6em', fontWeight: 700}}>®</sup>
+            RV Institute of Technology and<br/>Management<sup style={{fontSize: '0.6em', fontWeight: 700}}>®</sup>
           </div>
         </div>
         <div className="nav-links">
