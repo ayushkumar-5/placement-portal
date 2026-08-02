@@ -99,8 +99,21 @@ function App() {
         {student && (
           <div className="result-section">
             <div className="student-profile-header">
-              <div className="profile-avatar">
-                {student.name.charAt(0)}
+              <div className="profile-avatar" style={{ overflow: 'hidden', position: 'relative' }}>
+                <img 
+                  src={`/profiles/${student.usn.toUpperCase()}.jpg`} 
+                  alt={student.name}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    if (e.target.nextSibling) {
+                      e.target.nextSibling.style.display = 'flex';
+                    }
+                  }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{ display: 'none', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                  {student.name.charAt(0)}
+                </div>
               </div>
               <div className="profile-info">
                 <h2 className="student-name serif">{student.name}</h2>
