@@ -50,6 +50,15 @@ function App() {
     }
   };
 
+  const isNotEligible = student && (
+    ['1rf21ec023', '1rf22ec024', '1rf23ec033'].includes(student.usn.toLowerCase()) ||
+    ((!student.mobile || student.mobile === '-') &&
+     (!student.personalEmail || student.personalEmail === '-') &&
+     (!student.collegeEmail || student.collegeEmail === '-') &&
+     (!student.tenth || student.tenth === '-') &&
+     (!student.cgpa || student.cgpa === '-'))
+  );
+
   return (
     <>
       <nav className="navbar">
@@ -102,7 +111,7 @@ function App() {
               </div>
             </div>
 
-            {['1rf21ec023', '1rf22ec024', '1rf23ec033'].includes(student.usn.toLowerCase()) ? (
+            {isNotEligible ? (
               <div className="not-eligible-card">
                 <h3 className="serif">Placement Eligibility Status</h3>
                 <p>We are sorry, but you are currently not eligible for the placement process.</p>
