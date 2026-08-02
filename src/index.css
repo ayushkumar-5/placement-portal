@@ -328,6 +328,29 @@ h1, h2, h3, h4, .serif {
   font-size: 0.9rem;
 }
 
+.not-eligible-card {
+  background: #fff3f3;
+  border-left: 5px solid #d32f2f;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  text-align: center;
+  animation: slideUp 0.4s ease-out;
+}
+
+.not-eligible-card h3 {
+  color: #c62828;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.not-eligible-card p {
+  color: #5f2120;
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 0;
+}
+
 /* Semesters Grid */
 .sem-grid {
   display: grid;

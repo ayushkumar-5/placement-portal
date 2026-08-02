@@ -102,9 +102,16 @@ function App() {
               </div>
             </div>
 
-            <div className="details-grid">
-              <div className="details-column">
-                <h3 className="section-title serif">Contact Information</h3>
+            {['1rf21ec023', '1rf22ec024', '1rf23ec033'].includes(student.usn.toLowerCase()) ? (
+              <div className="not-eligible-card">
+                <h3 className="serif">Placement Eligibility Status</h3>
+                <p>We are sorry, but you are currently not eligible for the placement process.</p>
+                <p style={{ marginTop: '0.5rem', fontSize: '0.95rem', color: '#8b3a39' }}>Please contact the placement department for more details.</p>
+              </div>
+            ) : (
+              <div className="details-grid">
+                <div className="details-column">
+                  <h3 className="section-title serif">Contact Information</h3>
                 <div className="info-card">
                   <div className="info-row">
                     <span className="info-label">Phone</span>
@@ -157,6 +164,7 @@ function App() {
                 </div>
               </div>
             </div>
+            )}
           </div>
         )}
       </div>
