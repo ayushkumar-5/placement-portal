@@ -147,7 +147,7 @@ function App() {
                   </div>
                   <div className="info-row">
                     <span className="info-label">History of Backlogs</span>
-                    <span className={`info-value ${student.historyOfBacklogs === 'YES' ? 'backlog-badge' : 'success-badge'}`}>{student.historyOfBacklogs}</span>
+                    <span className={`info-value ${student.historyOfBacklogs === 'YES' ? 'backlog-badge' : (student.historyOfBacklogs === 'NO' ? 'success-badge' : '')}`}>{student.historyOfBacklogs}</span>
                   </div>
                 </div>
               </div>
