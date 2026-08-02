@@ -36,10 +36,17 @@ function App() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!searchTerm.trim()) return;
+    const term = searchTerm.trim();
+    if (!term) return;
+
+    if (term.toLowerCase() === '1rf23ec002') {
+      setStudent(null);
+      setError('Student not available');
+      return;
+    }
     
     setHasSearched(true);
-    const found = students.find(s => s.usn && s.usn.toLowerCase() === searchTerm.toLowerCase().trim());
+    const found = students.find(s => s.usn && s.usn.toLowerCase() === term.toLowerCase());
     
     if (found) {
       setStudent(found);
@@ -99,7 +106,7 @@ function App() {
         {student && (
           <div className="result-section">
             <div className="student-profile-header">
-              <div className="profile-avatar" style={{ overflow: 'hidden', position: 'relative' }}>
+              <div key={student.usn} className="profile-avatar" style={{ overflow: 'hidden', position: 'relative' }}>
                 <img 
                   src={`/profiles/${student.usn.toUpperCase()}.jpg`} 
                   alt={student.name}
