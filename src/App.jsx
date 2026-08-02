@@ -24,6 +24,7 @@ const students = lines.slice(1).map(line => {
     backlogSubj: values[14],
     activeBacklogs: values[15],
     cgpa: values[16],
+    historyOfBacklogs: values[17] || 'NO',
   };
 }).filter(Boolean);
 
@@ -136,6 +137,10 @@ function App() {
                   <div className="info-row">
                     <span className="info-label">Active Backlogs</span>
                     <span className={`info-value ${student.activeBacklogs !== '0' && student.activeBacklogs !== '-' ? 'backlog-badge' : ''}`}>{student.activeBacklogs}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">History of Backlogs</span>
+                    <span className={`info-value ${student.historyOfBacklogs === 'YES' ? 'backlog-badge' : 'success-badge'}`}>{student.historyOfBacklogs}</span>
                   </div>
                 </div>
               </div>
