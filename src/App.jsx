@@ -76,16 +76,6 @@ function App() {
 
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
-      const isStudentNotEligible = 
-        ['1rf21ec023', '1rf22ec024', '1rf23ec033'].includes(s.usn.toLowerCase()) ||
-        ((!s.mobile || s.mobile === '-') &&
-         (!s.personalEmail || s.personalEmail === '-') &&
-         (!s.collegeEmail || s.collegeEmail === '-') &&
-         (!s.tenth || s.tenth === '-') &&
-         (!s.cgpa || s.cgpa === '-'));
-      
-      if (isStudentNotEligible) return false;
-
       // CGPA Filter
       if (cgpaFilter !== 'all') {
         const cgpa = parseFloat(s.cgpa);
@@ -110,7 +100,9 @@ function App() {
       if (historyBacklogFilter !== 'all') {
         const hb = s.historyOfBacklogs ? s.historyOfBacklogs.toString().toUpperCase() : '-';
         if (historyBacklogFilter === 'YES' && hb !== 'YES') return false;
-        if (historyBacklogFilter === 'NO' && hb !== 'NO' && hb !== '-') return false;
+        if (historyBacklogFilter === 'NO') {
+          if (hb !== 'NO' && hb !== 'NONE' && hb !== '-' && hb !== '') return false;
+        }
       }
 
       return true;
