@@ -1,6 +1,37 @@
 import { useState, useMemo } from 'react';
 import csvData from './students.csv?raw';
 
+const UNAVAILABLE_USNS = ['1rf23ec002', '1rf23ec060'];
+
+const displayValue = (val) => (!val || val === '-') ? 'no data available' : val;
+
+const normalizeActiveBacklogs = (val) => {
+  if (!val || val === '-') return val;
+  const lower = val.toString().toLowerCase();
+  if (['none', 'zero', 'no'].includes(lower)) return '0';
+  return val;
+};
+
+const hasNoActiveBacklogs = (val) => {
+  const ab = val ? val.toString().toLowerCase() : '-';
+  return ab === '0' || ab === '-';
+};
+
+const normalizeHistoryOfBacklogs = (history) => {
+  const hb = (history || '').trim();
+  if (!hb || hb === '-') return '-';
+  const upper = hb.toUpperCase();
+  if (upper === 'NONE') return 'NO';
+  return upper;
+};
+
+const hasNoHistoryOfBacklogs = (val) => {
+  const hb = val ? val.toString().toUpperCase() : '-';
+  return hb === 'NO' || hb === 'NONE';
+};
+
+const hasHistoryOfBacklogs = (val) => val?.toString().toUpperCase() === 'YES';
+
 // Parse the CSV data
 const lines = csvData.trim().split('\n');
 const students = lines.slice(1).map(line => {
@@ -22,9 +53,9 @@ const students = lines.slice(1).map(line => {
     sem5: values[12],
     sem6: values[13],
     backlogSubj: values[14],
-    activeBacklogs: values[15],
+    activeBacklogs: normalizeActiveBacklogs(values[15]),
     cgpa: values[16],
-    historyOfBacklogs: values[17] || 'NO',
+    historyOfBacklogs: normalizeHistoryOfBacklogs(values[17]),
   };
 }).filter(Boolean);
 
@@ -35,7 +66,6 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [student, setStudent] = useState(null);
   const [error, setError] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
 
   // Filter state
   const [cgpaFilter, setCgpaFilter] = useState('all');
@@ -47,13 +77,12 @@ function App() {
     const term = searchTerm.trim();
     if (!term) return;
 
-    if (term.toLowerCase() === '1rf23ec002') {
+    if (UNAVAILABLE_USNS.includes(term.toLowerCase())) {
       setStudent(null);
       setError('Student not available');
       return;
     }
-    
-    setHasSearched(true);
+
     const found = students.find(s => s.usn && s.usn.toLowerCase() === term.toLowerCase());
     
     if (found) {
@@ -88,21 +117,14 @@ function App() {
 
       // Active Backlog Filter
       if (activeBacklogFilter !== 'all') {
-        const ab = s.activeBacklogs ? s.activeBacklogs.toString().toLowerCase() : '-';
-        if (activeBacklogFilter === '0') {
-            if (ab !== '0' && ab !== 'none' && ab !== 'zero' && ab !== 'no' && ab !== '-') return false;
-        } else if (activeBacklogFilter === '>0') {
-            if (ab === '0' || ab === 'none' || ab === 'zero' || ab === 'no' || ab === '-') return false;
-        }
+        if (activeBacklogFilter === '0' && !hasNoActiveBacklogs(s.activeBacklogs)) return false;
+        if (activeBacklogFilter === '>0' && hasNoActiveBacklogs(s.activeBacklogs)) return false;
       }
 
       // History of Backlog Filter
       if (historyBacklogFilter !== 'all') {
-        const hb = s.historyOfBacklogs ? s.historyOfBacklogs.toString().toUpperCase() : '-';
-        if (historyBacklogFilter === 'YES' && hb !== 'YES') return false;
-        if (historyBacklogFilter === 'NO') {
-          if (hb !== 'NO' && hb !== 'NONE' && hb !== '-' && hb !== '') return false;
-        }
+        if (historyBacklogFilter === 'YES' && !hasHistoryOfBacklogs(s.historyOfBacklogs)) return false;
+        if (historyBacklogFilter === 'NO' && !hasNoHistoryOfBacklogs(s.historyOfBacklogs)) return false;
       }
 
       return true;
@@ -202,15 +224,15 @@ function App() {
                     <div className="info-card">
                       <div className="info-row">
                         <span className="info-label">Phone</span>
-                        <span className="info-value">{student.mobile || 'N/A'}</span>
+                        <span className="info-value">{displayValue(student.mobile)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">College Email</span>
-                        <span className="info-value">{student.collegeEmail || 'N/A'}</span>
+                        <span className="info-value">{displayValue(student.collegeEmail)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">Personal Email</span>
-                        <span className="info-value">{student.personalEmail || 'N/A'}</span>
+                        <span className="info-value">{displayValue(student.personalEmail)}</span>
                       </div>
                     </div>
 
@@ -218,23 +240,23 @@ function App() {
                     <div className="info-card">
                       <div className="info-row">
                         <span className="info-label">10th Marks</span>
-                        <span className="info-value">{student.tenth}</span>
+                        <span className="info-value">{displayValue(student.tenth)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">12th Marks</span>
-                        <span className="info-value">{student.twelfth}</span>
+                        <span className="info-value">{displayValue(student.twelfth)}</span>
                       </div>
                       <div className="info-row highlight-row">
                         <span className="info-label">Cumulative CGPA</span>
-                        <span className="info-value cgpa-value">{student.cgpa}</span>
+                        <span className="info-value cgpa-value">{displayValue(student.cgpa)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">Active Backlogs</span>
-                        <span className={`info-value ${student.activeBacklogs !== '0' && student.activeBacklogs !== '-' ? 'backlog-badge' : ''}`}>{student.activeBacklogs}</span>
+                        <span className={`info-value ${!hasNoActiveBacklogs(student.activeBacklogs) ? 'backlog-badge' : ''}`}>{displayValue(student.activeBacklogs)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">History of Backlogs</span>
-                        <span className={`info-value ${student.historyOfBacklogs === 'YES' ? 'backlog-badge' : (student.historyOfBacklogs === 'NO' ? 'success-badge' : '')}`}>{student.historyOfBacklogs}</span>
+                        <span className={`info-value ${hasHistoryOfBacklogs(student.historyOfBacklogs) ? 'backlog-badge' : (student.historyOfBacklogs === 'NO' ? 'success-badge' : '')}`}>{displayValue(student.historyOfBacklogs)}</span>
                       </div>
                     </div>
                   </div>
@@ -245,7 +267,7 @@ function App() {
                       {[1,2,3,4,5,6].map(sem => (
                         <div className="sem-card" key={sem}>
                           <span className="sem-title">Sem {sem}</span>
-                          <span className="sem-score">{student[`sem${sem}`]}</span>
+                          <span className="sem-score">{displayValue(student[`sem${sem}`])}</span>
                         </div>
                       ))}
                     </div>
@@ -313,8 +335,8 @@ function App() {
                     <h4>{s.name}</h4>
                     <span className="badge usn-badge" style={{ alignSelf: 'flex-start', padding: '0.2rem 0.6rem', fontSize: '0.75rem' }}>{s.usn}</span>
                     <div className="student-card-stats">
-                      <div>CGPA: <strong>{s.cgpa}</strong></div>
-                      <div>Active: <strong className={s.activeBacklogs !== '0' && s.activeBacklogs !== '-' ? 'backlog-text' : ''}>{s.activeBacklogs}</strong></div>
+                      <div>CGPA: <strong>{displayValue(s.cgpa)}</strong></div>
+                      <div>Active: <strong className={!hasNoActiveBacklogs(s.activeBacklogs) ? 'backlog-text' : ''}>{displayValue(s.activeBacklogs)}</strong></div>
                     </div>
                   </div>
                 </div>
