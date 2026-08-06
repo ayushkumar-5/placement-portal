@@ -83,6 +83,7 @@ function App() {
         if (cgpaFilter === '7.0' && cgpa < 7.0) return false;
         if (cgpaFilter === '7.5' && cgpa < 7.5) return false;
         if (cgpaFilter === '8.0' && cgpa < 8.0) return false;
+        if (cgpaFilter === '9.0' && cgpa < 9.0) return false;
       }
 
       // Active Backlog Filter
@@ -264,6 +265,7 @@ function App() {
                   <option value="7.0">&ge; 7.0</option>
                   <option value="7.5">&ge; 7.5</option>
                   <option value="8.0">&ge; 8.0</option>
+                  <option value="9.0">&ge; 9.0</option>
                 </select>
               </div>
               <div className="filter-group">
