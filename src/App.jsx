@@ -76,7 +76,6 @@ function App() {
 
   const filteredStudents = useMemo(() => {
     return students.filter(s => {
-      // Exclude "Not Eligible" students from the directory entirely
       const isStudentNotEligible = 
         ['1rf21ec023', '1rf22ec024', '1rf23ec033'].includes(s.usn.toLowerCase()) ||
         ((!s.mobile || s.mobile === '-') &&
@@ -84,7 +83,7 @@ function App() {
          (!s.collegeEmail || s.collegeEmail === '-') &&
          (!s.tenth || s.tenth === '-') &&
          (!s.cgpa || s.cgpa === '-'));
-
+      
       if (isStudentNotEligible) return false;
 
       // CGPA Filter
