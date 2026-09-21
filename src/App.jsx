@@ -6,15 +6,25 @@ const UNAVAILABLE_USNS = ['1rf23ec002', '1rf23ec060'];
 const displayValue = (val) => (!val || val === '-') ? 'no data available' : val;
 
 const normalizeActiveBacklogs = (val) => {
-  if (!val || val === '-') return val;
-  const lower = val.toString().toLowerCase();
+  const normalized = val?.toString().trim();
+  if (!normalized || normalized === '-') return '-';
+  const lower = normalized.toLowerCase();
   if (['none', 'zero', 'no'].includes(lower)) return '0';
-  return val;
+  return normalized;
 };
 
-const hasNoActiveBacklogs = (val) => {
-  const ab = val ? val.toString().toLowerCase() : '-';
-  return ab === '0' || ab === '-';
+const activeBacklogCount = (val) => {
+  const normalized = normalizeActiveBacklogs(val);
+  if (normalized === '-') return null;
+
+  const count = Number(normalized);
+  return Number.isFinite(count) && count >= 0 ? count : null;
+};
+
+const hasNoActiveBacklogs = (val) => activeBacklogCount(val) === 0;
+const hasActiveBacklogs = (val) => {
+  const count = activeBacklogCount(val);
+  return count !== null && count > 0;
 };
 
 const normalizeHistoryOfBacklogs = (history) => {
@@ -118,7 +128,7 @@ function App() {
       // Active Backlog Filter
       if (activeBacklogFilter !== 'all') {
         if (activeBacklogFilter === '0' && !hasNoActiveBacklogs(s.activeBacklogs)) return false;
-        if (activeBacklogFilter === '>0' && hasNoActiveBacklogs(s.activeBacklogs)) return false;
+        if (activeBacklogFilter === '>0' && !hasActiveBacklogs(s.activeBacklogs)) return false;
       }
 
       // History of Backlog Filter
@@ -252,7 +262,7 @@ function App() {
                       </div>
                       <div className="info-row">
                         <span className="info-label">Active Backlogs</span>
-                        <span className={`info-value ${!hasNoActiveBacklogs(student.activeBacklogs) ? 'backlog-badge' : ''}`}>{displayValue(student.activeBacklogs)}</span>
+                        <span className={`info-value ${hasActiveBacklogs(student.activeBacklogs) ? 'backlog-badge' : ''}`}>{displayValue(student.activeBacklogs)}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">History of Backlogs</span>
@@ -336,7 +346,7 @@ function App() {
                     <span className="badge usn-badge" style={{ alignSelf: 'flex-start', padding: '0.2rem 0.6rem', fontSize: '0.75rem' }}>{s.usn}</span>
                     <div className="student-card-stats">
                       <div>CGPA: <strong>{displayValue(s.cgpa)}</strong></div>
-                      <div>Active: <strong className={!hasNoActiveBacklogs(s.activeBacklogs) ? 'backlog-text' : ''}>{displayValue(s.activeBacklogs)}</strong></div>
+                      <div>Active: <strong className={hasActiveBacklogs(s.activeBacklogs) ? 'backlog-text' : ''}>{displayValue(s.activeBacklogs)}</strong></div>
                     </div>
                   </div>
                 </div>
